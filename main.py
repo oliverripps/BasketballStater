@@ -1,7 +1,6 @@
 ##TO DO FEATURE PLAN
 
-# Calulcate Advanced Metricw
-# Send to File
+# Calulcate Advanced Metrics
 # WRONG BUTTON GO BACK(STore Last 5)
 # Auto Save
 # Live Feed
@@ -11,6 +10,7 @@ import pygame
 import pygame.locals 
 from button import button, text
 from datetime import date
+import pdfkit
 
 #initializing pygame
 pygame.init()
@@ -45,8 +45,25 @@ run = True
 selected = False
 global curr
 def send_to_file(stats):    
+    # need to add in advanced metrics
     today = date.today()
-    file_name = str(today.month) + "/" + str(today.day) + " Statsheet"
+    file_name = str(today.month) + "/" + str(today.day) + " Statsheet.pdf"
+
+    csv_string = "PLAYER,WINS,FGM,FGA,3PA,3PM,AST,ORB,DRB,REB,STL,BLK,TOV \n"
+    for person in stats.keys():
+        csv_string += person
+        csv_string += ","
+        for i in stats[person]:
+            csv_string += str(i)
+            csv_string += ","
+        #removing last , 
+        csv_string = csv_string[0:len(csv_string)-1]
+        csv_string += " /n"
+    #removing last /n
+    csv_string = csv_string[0:len(csv_string)-3]
+    print(csv_string)
+
+    pdfkit.from_string(csv_string, file_name)
     print("SENT TO FILE:", file_name)
 
 # "WIN" ,"FGM", "FGA", "3PM", "3PA", "AST", "ORB", "DRB","STL","BLK","TOV"]
@@ -107,11 +124,15 @@ def Number(num):
         stats[name][stats_dict["index"]] += 1
         if stats_dict["index"] == 1 or stats_dict["index"] == 3:
             stats[name][stats_dict["index"] + 1] += 1
+        if stats_dict["index"] == 6 or stats_dict["index"] == 7:
+            stats[name][8] += 1
     else:
-        stats[name] = [0]*11
+        stats[name] = [0]*12
         stats[name][stats_dict["index"]] = 1
         if stats_dict["index"] == 1 or stats_dict["index"] == 3:
             stats[name][stats_dict["index"] + 1] = 1
+        if stats_dict["index"] == 6 or stats_dict["index"] == 7:
+            stats[name][8] = 1
 
     print(stats)
 players = [
@@ -203,17 +224,18 @@ options = [
       "function": DRB,
       "index": 7
     },
+    #total rebounds is index 8
     { "name" : "STL",
       "function": STL,
-      "index": 8
+      "index": 9
     },
     { "name" : "BLK",
       "function": BLK,
-      "index": 9
+      "index": 10
     },
     { "name" : "TOV",
       "function": TOV,
-      "index": 10
+      "index": 11
     }
     ]
 
