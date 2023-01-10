@@ -10,7 +10,8 @@ import pygame
 import pygame.locals 
 from button import button, text
 from datetime import date
-import pdfkit
+import csv
+
 
 #initializing pygame
 pygame.init()
@@ -47,24 +48,17 @@ global curr
 def send_to_file(stats):    
     # need to add in advanced metrics
     today = date.today()
-    file_name = str(today.month) + "/" + str(today.day) + " Statsheet.pdf"
+    file_name = "./" + str(today.month) + "-" + str(today.day) + "statsheet.csv"
 
-    csv_string = "PLAYER,WINS,FGM,FGA,3PA,3PM,AST,ORB,DRB,REB,STL,BLK,TOV \n"
+    header = ["PLAYER","WINS","FGM","FGA","3PA","3PM","AST","ORB","DRB","REB","STL","BLK","TOV"]
+    f = open(file_name, 'w')
+    writer = csv.writer(f)
+    writer.writerow(header)
     for person in stats.keys():
-        csv_string += person
-        csv_string += ","
+        csv_string = [person]
         for i in stats[person]:
-            csv_string += str(i)
-            csv_string += ","
-        #removing last , 
-        csv_string = csv_string[0:len(csv_string)-1]
-        csv_string += " /n"
-    #removing last /n
-    csv_string = csv_string[0:len(csv_string)-3]
-    print(csv_string)
-
-    pdfkit.from_string(csv_string, file_name)
-    print("SENT TO FILE:", file_name)
+            csv_string.append(str(i))
+        writer.writerow(csv_string)
 
 # "WIN" ,"FGM", "FGA", "3PM", "3PA", "AST", "ORB", "DRB","STL","BLK","TOV"]
 def WIN():
@@ -114,8 +108,16 @@ def find_option(lst, name):
     return {}
 
 stats = {}
-
+global stat_records
+stat_records = []
+global iteration
+iteration = -1
 def Number(num):
+    global stat_records
+    global iteration
+    stat_records.append(stats.copy())
+    print(stat_records)
+    iteration+=1
     player_dict = find(players, num)
     name = player_dict["name"]
     stats_dict = find_option(options, curr)
@@ -135,6 +137,9 @@ def Number(num):
             stats[name][8] = 1
 
     print(stats)
+    save()
+
+
 players = [
     { "number": "45",
     "function": Number,
@@ -288,9 +293,12 @@ while run:
         elif event.type == pygame.KEYDOWN:
             if pygame.key.get_mods() & pygame.KMOD_META:
                 if event.key == pygame.K_s:
-                    save()  
-                if event.key == pygame.K_n:
-                    new_game()
+                    save()
+                if event.key == pygame.K_z:
+                    print("Undo")
+                    if len(stat_records) > 0:
+                        stats = stat_records[iteration].copy()
+                        print(stats)
         elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     pos = pygame.mouse.get_pos()
