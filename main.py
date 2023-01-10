@@ -1,6 +1,16 @@
+##TO DO FEATURE PLAN
+
+# Calulcate Advanced Metricw
+# Send to File
+# WRONG BUTTON GO BACK(STore Last 5)
+# Auto Save
+# Live Feed
+# Aggregate Stats Generator
+
 import pygame
 import pygame.locals 
 from button import button, text
+from datetime import date
 
 #initializing pygame
 pygame.init()
@@ -33,75 +43,177 @@ pygame.display.flip()
 
 run = True
 selected = False
+global curr
+def send_to_file(stats):    
+    today = date.today()
+    file_name = str(today.month) + "/" + str(today.day) + " Statsheet"
+    print("SENT TO FILE:", file_name)
 
 # "WIN" ,"FGM", "FGA", "3PM", "3PA", "AST", "ORB", "DRB","STL","BLK","TOV"]
 def WIN():
-    print('FGA')
+    global curr
+    curr = "WIN"
 def FGM():
-    print('FGM')
+    global curr
     curr = "FGM"
-    print(selected)
 def FGA():
-    print('FGA')
+    global curr
+    curr = "FGA"
 def TPM():
-    print('FGA')
+    global curr
+    curr = "3PM"
 def TPA():
-    print('FGM')
+    global curr
+    curr = "3PA"
 def AST():
-    print('FGA')
+    global curr
+    curr = "AST"
 def ORB():
-    print('FGM')
+    global curr
+    curr = "ORB"
 def DRB():
-    print('FGA')
+    global curr
+    curr = "DRB"
 def STL():
-    print('FGM')
+    global curr
+    curr = "STL"
 def BLK():
-    print('FGA')
+    global curr
+    curr = "BLK"
 def TOV():
-    print('FGM')
+    global curr
+    curr = "TOV"
 
-def Number(num):
-    print(num)
+def find(lst, num):
+    for dictionary in lst:
+        if dictionary["number"] == num:
+            return dictionary
+    return {}
+
+def find_option(lst, name):
+    for dictionary in lst:
+        if dictionary["name"] == name:
+            return dictionary
+    return {}
 
 stats = {}
+
+def Number(num):
+    player_dict = find(players, num)
+    name = player_dict["name"]
+    stats_dict = find_option(options, curr)
+    if name in stats:
+        print(stats_dict["index"])
+        stats[name][stats_dict["index"]] += 1
+        if stats_dict["index"] == 1 or stats_dict["index"] == 3:
+            stats[name][stats_dict["index"] + 1] += 1
+    else:
+        stats[name] = [0]*11
+        stats[name][stats_dict["index"]] = 1
+        if stats_dict["index"] == 1 or stats_dict["index"] == 3:
+            stats[name][stats_dict["index"] + 1] = 1
+
+    print(stats)
 players = [
     { "number": "45",
     "function": Number,
-    "name": "Dorde"}
+    "name": "Cole Otley"},
+    { "number": "44",
+    "function": Number,
+    "name": "Dorde Otastavic"},
+    {"number": "35",
+    "function": Number,
+    "name": "Milun Micanovic"},
+    { "number": "34",
+    "function": Number,
+    "name": "Jackson Reynolds"},
+    { "number": "33",
+    "function": Number,
+    "name": "Anastasis Spyroglou"},
+    { "number": "32",
+    "function": Number,
+    "name": "Shea Laursen"},
+    { "number": "25",
+    "function": Number,
+    "name": "Chris Allen Jr."},
+    { "number": "24",
+    "function": Number,
+    "name": "Aidan Miller"},
+    { "number": "23",
+    "function": Number,
+    "name": "Dimitrije Radusinovic"},
+    { "number": "21",
+    "function": Number,
+    "name": "Andrew Gannon"},
+    { "number": "20",
+    "function": Number,
+    "name": "Adel Dibaei"},
+    { "number": "14",
+    "function": Number,
+    "name": "Adam Navarre"},
+    { "number": "13",
+    "function": Number,
+    "name": "Brian McGrath"},
+    { "number": "12",
+    "function": Number,
+    "name": "Zach Smith"},
+    { "number": "11",
+    "function": Number,
+    "name": "Yuuki Okubo"},
+    { "number": "5",
+    "function": Number,
+    "name": "Asaan Snipes-Rea"},
+     { "number": "3",
+    "function": Number,
+    "name": "Will Bousquette III"},
+     { "number": "2",
+    "function": Number,
+    "name": "Henry Lieber"},
 ]
 options = [
+    { "name" : "WIN",
+      "function": WIN,
+      "index": 0
+    },
     { "name" : "FGM",
-      "function": FGM
+      "function": FGM,
+      "index": 1
     },
     { "name" : "FGA",
-      "function": FGA
+      "function": FGA,
+      "index": 2
     },
     { "name" : "3PM",
-      "function": TPM
+      "function": TPM,
+      "index": 3
     },
     { "name" : "3PA",
-      "function": TPA
+      "function": TPA,
+      "index": 4
     },
     { "name" : "AST",
-      "function": AST
+      "function": AST,
+      "index": 5
     },
     { "name" : "ORB",
-      "function": ORB
+      "function": ORB,
+      "index": 6
     },
     { "name" : "DRB",
-      "function": TPA
+      "function": DRB,
+      "index": 7
     },
     { "name" : "STL",
-      "function": AST
+      "function": STL,
+      "index": 8
     },
     { "name" : "BLK",
-      "function": ORB
+      "function": BLK,
+      "index": 9
     },
     { "name" : "TOV",
-      "function": TPA
-    },
-    { "name" : "WIN",
-      "function": AST
+      "function": TOV,
+      "index": 10
     }
     ]
 
@@ -137,8 +249,10 @@ for option in players:
     player_list.append(curr_button)
 
 def save():
-    print(stats)
-    print("Save")
+    if stats == {}:
+        print("No Stats To Save")
+    else:
+        send_to_file(stats)
 
 def new_game():
     stats = {}
