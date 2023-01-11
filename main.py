@@ -110,14 +110,13 @@ def find_option(lst, name):
 stats = {}
 global stat_records
 stat_records = []
-global iteration
-iteration = -1
 def Number(num):
     global stat_records
-    global iteration
-    stat_records.append(stats.copy())
+    new_stats = {}
+    for i in stats.keys():
+        new_stats[i] = stats[i].copy()
+    stat_records.append(new_stats)
     print(stat_records)
-    iteration+=1
     player_dict = find(players, num)
     name = player_dict["name"]
     stats_dict = find_option(options, curr)
@@ -297,7 +296,8 @@ while run:
                 if event.key == pygame.K_z:
                     print("Undo")
                     if len(stat_records) > 0:
-                        stats = stat_records[iteration].copy()
+                        stats = stat_records[len(stat_records)-1].copy()
+                        stat_records = stat_records[0:-1]
                         print(stats)
         elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
