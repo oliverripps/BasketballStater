@@ -1,10 +1,11 @@
 ##TO DO FEATURE PLAN
 
 # Calulcate Advanced Metrics
-# WRONG BUTTON GO BACK(STore Last 5)
 # Auto Save
 # Live Feed
 # Aggregate Stats Generator
+# import csv and work from there in the case of a crash
+
 
 import pygame
 import pygame.locals 
@@ -50,7 +51,7 @@ def send_to_file(stats):
     today = date.today()
     file_name = "./" + str(today.month) + "-" + str(today.day) + "statsheet.csv"
 
-    header = ["PLAYER","WINS","FGM","FGA","3PA","3PM","AST","ORB","DRB","REB","STL","BLK","TOV"]
+    header = ["PLAYER","WINS","FGM","FGA","3PM","3PA","AST","ORB","DRB","REB","STL","BLK","TOV"]
     f = open(file_name, 'w')
     writer = csv.writer(f)
     writer.writerow(header)
@@ -127,6 +128,11 @@ def Number(num):
             stats[name][stats_dict["index"] + 1] += 1
         if stats_dict["index"] == 6 or stats_dict["index"] == 7:
             stats[name][8] += 1
+        if stats_dict["index"] == 3:
+            stats[name][1] += 1
+            stats[name][2] += 1
+        if stats_dict["index"] == 4:
+            stats[name][2] += 1
     else:
         stats[name] = [0]*12
         stats[name][stats_dict["index"]] = 1
@@ -134,6 +140,11 @@ def Number(num):
             stats[name][stats_dict["index"] + 1] = 1
         if stats_dict["index"] == 6 or stats_dict["index"] == 7:
             stats[name][8] = 1
+        if stats_dict["index"] == 3:
+            stats[name][1] += 1
+            stats[name][2] += 1
+        if stats_dict["index"] == 4:
+            stats[name][2] += 1
 
     print(stats)
     save()
