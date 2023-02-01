@@ -67,10 +67,10 @@ def WIN():
     curr = "WIN"
 def FGM():
     global curr
-    curr = "FGM"
+    curr = "2PM"
 def FGA():
     global curr
-    curr = "FGA"
+    curr = "2PA"
 def TPM():
     global curr
     curr = "3PM"
@@ -211,11 +211,11 @@ options = [
       "function": WIN,
       "index": 0
     },
-    { "name" : "FGM",
+    { "name" : "2PM",
       "function": FGM,
       "index": 1
     },
-    { "name" : "FGA",
+    { "name" : "2PA",
       "function": FGA,
       "index": 2
     },
